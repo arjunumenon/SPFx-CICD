@@ -3,14 +3,11 @@
 Create Azure AD App Registration
 .DESCRIPTION
 .EXAMPLE
-.\aad-app-add-aadapp.ps1 -AppName "AUM Azure CI-CD App" --password "" --appId "$(AppId)" --tenant "$(TenantId)"
-Login commands used in the CI/CD PowerShell Controls
-.EXAMPLE
 .\aad-app-add-aadapp.ps1 -AppName "AUM CI-CD Deployment App"
-Creation o
+Create AAD App without Certificate and Admin Consent
 .EXAMPLE
-.\aad-app-add-aadapp.ps1 -AppName "AUM CI-CD Deployment App"  -CertificatePath ".\AUM CI-CD Deployment App Certificate.cer" -CompleteAutomation
-Initiate Login directly from the machine
+.\aad-app-add-aadapp.ps1 -AppName "AUM CI-CD Deployment App"  -CertificatePath ".\AUM CI-CD Deployment App Certificate.cer" -AutoAdminConsent
+Create AAD App WITH Certificate and Admin Consent
 #>
 Param(
         [Parameter(Mandatory = $true)]
@@ -18,7 +15,7 @@ Param(
         [Parameter(Mandatory = $false)]
         [string]$APIPermissionList = "https://microsoft.sharepoint-df.com/Sites.FullControl.All, https://graph.microsoft.com/Sites.Read.All",
         [Parameter(Mandatory = $false)]
-        [switch]$CompleteAutomation = $false,
+        [switch]$AutoAdminConsent = $false,
         [Parameter(Mandatory = $false)]
         [string]$CertificatePath
 )
@@ -34,18 +31,21 @@ function executeAADAppCreation {
         m365 login
     }
 
-    $AddedApp = (m365 aad app add --name $AppName --apisApplication $APIPermissionList  --redirectUris "https://login.microsoftonline.com/common/oauth2/nativeclient" --platform publicClient --certificateFile $CertificatePath --output json) | ConvertFrom-Json
-    Write-Host "AAD App Created with details. App ID : $($AddedApp.appId). Object ID : $($AddedApp.objectId). Tenant ID : $($AddedApp.tenantId)"
+    $AddedApp = $null
 
-    if($CompleteAutomation)
+    if($AutoAdminConsent)
     {
-        # Complete Automation Requires Azure CLI to be installed
-        # https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
-        # Consenting the Application using Azure CLI
-        az ad app permission admin-consent --id $($AddedApp.objectId)
+        # # Complete Automation Requires Azure CLI to be installed
+        # # https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
+        # # Consenting the Application using Azure CLI
+        # az ad app permission admin-consent --id $($AddedApp.objectId)
+        $AddedApp = (m365 aad app add --name $AppName --apisApplication $APIPermissionList  --redirectUris "https://login.microsoftonline.com/common/oauth2/nativeclient" --platform publicClient --certificateFile $CertificatePath --grantAdminConsent --output json) | ConvertFrom-Json
+        Write-Host "AAD App Created with details. App ID : $($AddedApp.appId). Object ID : $($AddedApp.objectId). Tenant ID : $($AddedApp.tenantId)"
     }
     else
     {
+        $AddedApp = (m365 aad app add --name $AppName --apisApplication $APIPermissionList  --redirectUris "https://login.microsoftonline.com/common/oauth2/nativeclient" --platform publicClient --certificateFile $CertificatePath --output json) | ConvertFrom-Json
+        Write-Host "AAD App Created with details. App ID : $($AddedApp.appId). Object ID : $($AddedApp.objectId). Tenant ID : $($AddedApp.tenantId)"
          # Manually Opening the URL with the browser
         Write-Host "Open this URL for consenting the permission - https://login.microsoftonline.com/$($AddedApp.tenantId)/v2.0/adminconsent?client_id=$($AddedApp.appId)&scope=.default"
 
