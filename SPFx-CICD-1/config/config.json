@@ -1,0 +1,27 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "aum-ci-cd-wp-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/aumCiCdWp/AumCiCdWpWebPart.js",
+          "manifest": "./src/webparts/aumCiCdWp/AumCiCdWpWebPart.manifest.json"
+        }
+      ]
+    },
+    "aum-ci-cd-webpart-2-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/aumCiCdWebpart2/AumCiCdWebpart2WebPart.js",
+          "manifest": "./src/webparts/aumCiCdWebpart2/AumCiCdWebpart2WebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "AumCiCdWpWebPartStrings": "lib/webparts/aumCiCdWp/loc/{locale}.js",
+    "AumCiCdWebpart2WebPartStrings": "lib/webparts/aumCiCdWebpart2/loc/{locale}.js"
+  }
+}

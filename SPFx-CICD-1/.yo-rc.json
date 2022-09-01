@@ -1,0 +1,16 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": false,
+    "version": "1.14.0",
+    "libraryName": "sp-fx-cicd-1",
+    "libraryId": "2a5c5361-3f8b-4569-acdf-e5d9389eece4",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "sp-fx-cicd-1",
+    "solutionShortDescription": "sp-fx-cicd-1 description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}
